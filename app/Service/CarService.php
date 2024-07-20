@@ -1,5 +1,5 @@
 <?php
-namespace App\Repository;
+namespace App\Service;
 use App\Models\Car;
 
 class CarService

@@ -3,18 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CarRequest;
+use App\Models\Car;
 use App\Repository\CarRepository;
-use App\Repository\CarService;
+use App\Service\CarService;
+use App\Trait\FileUploadTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class CarController extends Controller
 {
+    use FileUploadTrait;
     protected CarRepository $carRepository;
     protected CarService $carService;
     public function __construct(CarRepository $carRepository,CarService $carService)
     {
-        $carRepository=$this->carRepository;
-        $carService=$this->carService;
+        $this->carRepository = $carRepository;
+        $this->carService = $carService;
     }
 
     public function index()
@@ -39,8 +44,18 @@ class CarController extends Controller
 
     public function store(CarRequest $request)
     {
+
         $data=$request->all();
-        $car=$this->carService->storeCar($data);
+        $data['user_id'] = Auth::id();
+
+        $car=new Car;
+
+          // Handle file upload
+        $fileName=$this->uploadFile($request,'picture_url','uploads/car');
+        if ($fileName) {
+            $data['picture_url'] = $fileName;
+        }
+    $car = $this->carService->storeCar($data);
 
         return response()->json([
             'data'   => $car,
