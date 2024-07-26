@@ -15,4 +15,6 @@ Route::middleware('auth:sanctum')->get('/user', [AuthController::class, 'user'])
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
 
-Route::apiResource('/car',CarController::class)->middleware('auth:sanctum');
+Route::apiResource('/car', CarController::class);
+
+Route::get('/search', [CarController::class, 'searchCar']);

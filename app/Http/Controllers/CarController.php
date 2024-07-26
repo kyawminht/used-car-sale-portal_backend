@@ -87,4 +87,15 @@ class CarController extends Controller
             'status' => 'success',
         ]);
     }
+
+    public function searchCar(Request $request)
+    {
+        $data=$request->query('search');
+        $car=$this->carService->search($data);
+
+        return response()->json([
+            'data'   => $car,
+            'status' => 'success',
+        ]);
+    }
 }
