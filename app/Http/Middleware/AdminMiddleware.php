@@ -20,7 +20,7 @@ class AdminMiddleware
         if (Auth::user()->role != 1){
             return response()->json(['message' => 'Unauthorized'], 403);
         }
-        
+
         return $next($request);
     }
 }
