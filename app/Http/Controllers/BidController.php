@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\BidRequest;
 use App\Models\Bid;
+use App\Repository\BidRepository;
 use App\Service\BidService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,13 +12,22 @@ use Illuminate\Support\Facades\Auth;
 class BidController extends Controller
 {
     protected BidService $bidService;
+    protected BidRepository $bidRepository;
 
-    public function __construct(BidService $bidService){
+    public function __construct(BidService $bidService,BidRepository $bidRepository){
         $this->bidService=$bidService;
+        $this->bidRepository=$bidRepository;
     }
-    public function index()
-    {
 
+
+    public function show($id)
+    {
+        $bid=$this->bidRepository->showBid($id);
+        return response()->json([
+            'data'    => $bid,
+            'message' => 'Bid get successfully',
+            'status'  => 'success',
+        ]);
     }
 
 
@@ -33,6 +43,6 @@ class BidController extends Controller
                 'message' => 'Bid placed successfully',
                 'status'  => 'success',
             ]);
-        
+
     }
 }

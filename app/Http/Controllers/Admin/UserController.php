@@ -46,7 +46,12 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $user=$this->userRepository->showUser($id);
+        return response()->json([
+            'data'    => $user,
+            'message' => 'users get successfully',
+            'status'  => 'success',
+        ]);
     }
 
     /**

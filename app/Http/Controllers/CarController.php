@@ -10,6 +10,7 @@ use App\Trait\FileUploadTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class CarController extends Controller
 {
@@ -42,39 +43,51 @@ class CarController extends Controller
         ]);
     }
 
-    public function store(CarRequest $request)
-    {
+            public function store(CarRequest $request)
+        {
+            $data = $request->all();
+            $data['user_id'] = Auth::id();
 
-        $data=$request->all();
-        $data['user_id'] = Auth::id();
+            // Handle file upload
+            $fileName = $this->uploadFile($request, 'picture_url', 'uploads/car');
+            if ($fileName) {
+                $data['picture_url'] = $fileName;
+            }
 
-        $car=new Car;
+            $car = $this->carService->storeCar($data);
 
-          // Handle file upload
-        $fileName=$this->uploadFile($request,'picture_url','uploads/car');
-        if ($fileName) {
-            $data['picture_url'] = $fileName;
+            return response()->json([
+                'data'   => $car,
+                'message' => 'Car created successfully',
+                'status' => 'success',
+            ]);
         }
-    $car = $this->carService->storeCar($data);
 
-        return response()->json([
-            'data'   => $car,
-            'message' => 'car created successfully',
-            'status' => 'success',
-        ]);
-    }
 
-    public function update(CarRequest $request,$id)
-    {
-        $data=$request->all();
-        $car=$this->carService->updateCar($data,$id);
+        public function update(CarRequest $request, $id)
+        {
+            $data = $request->all();
+            $car = $this->carService->updateCar([], $id);
 
-        return response()->json([
-            'data'   => $car,
-            'message' => 'car updated successfully',
-            'status' => 'success',
-        ]);
-    }
+            // Handle file upload
+            $fileName = $this->uploadFile($request, 'picture_url', 'uploads/car');
+            if ($fileName) {
+                // Delete old image
+                if ($car->picture_url) {
+                    Storage::delete('public/uploads/car/' . $car->picture_url);
+                }
+                $data['picture_url'] = $fileName; 
+            }
+
+            $car = $this->carService->updateCar($data, $id);
+
+            return response()->json([
+                'data'   => $car,
+                'message' => 'Car updated successfully',
+                'status' => 'success',
+            ]);
+        }
+
 
     public function destroy($id)
     {

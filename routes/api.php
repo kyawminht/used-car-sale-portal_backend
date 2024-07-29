@@ -20,14 +20,21 @@ Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logo
 
 Route::middleware(['auth:sanctum', 'isAdmin'])->group(function () {
     Route::get('/users', [UserController::class, 'index']);
+    Route::get('/user/{id}', [UserController::class, 'show']);
+    Route::get('/bid/show/{id}', [BidController::class, 'show']);
+    Route::post('/car/update/{id}', [CarController::class, 'update']);
+    Route::delete('/car/delete/{id}', [CarController::class, 'destroy']);
 });
 //car
 Route::post('/car', [CarController::class, 'store'])->middleware('auth:sanctum');
 
-Route::get('/cars', [CarController::class, 'index']);
+
+Route::get('/car', [CarController::class, 'index']);
+Route::get('/car/{id}', [CarController::class, 'show']);
 
 //bid
 Route::post('/bid/store', [BidController::class, 'store'])->middleware('auth:sanctum');
+
 
 //search car
 Route::get('/search', [CarController::class, 'searchCar']);

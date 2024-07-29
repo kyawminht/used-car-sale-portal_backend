@@ -2,6 +2,7 @@
 namespace App\Trait;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 trait FileUploadTrait
 {
@@ -9,12 +10,12 @@ trait FileUploadTrait
     {
         if ($request->hasFile($fileName)) {
             $file = $request->file($fileName);
-            $fileName = time() . '.' . $file->getClientOriginalExtension();
 
-            // Store the file in the specified directory
+            // Handle single file
+            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
             $file->storeAs('public/' . $directory, $fileName);
 
-            return $fileName;
+            return $fileName; // Return single file name as string
         }
 
         return null;
